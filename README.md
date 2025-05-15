@@ -13,7 +13,7 @@ An AI-powered IoT-based smart glove system that recognizes hand signs and sign l
 
 Below is the system flow of the project:
 
-![System Architecture](https://files.chat.openai.com/file_00000000451c61f595800d70f7d61c7e/Hand_Sign_Recognition_System_Diagram.png)
+![System Architecture](Architecture.png)
 
 ---
 
