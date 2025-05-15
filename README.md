@@ -160,7 +160,3 @@ Response:
 ## 📄 License
 
 MIT License © 2025 Dhiwin Samrich
-
----
-
-Would you like a diagram or illustration to include in the README (e.g., system architecture)? I can generate one for you.
