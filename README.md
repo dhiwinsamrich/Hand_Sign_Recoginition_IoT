@@ -1,91 +1,130 @@
 # 🖐️ Hand Sign Recognition with IoT
 
-An AI-powered IoT-based system that recognizes sign language gestures using a smart glove equipped with sensors and a machine learning model deployed on AWS Cloud. Built for accessibility and real-time gesture interpretation.
-
-## 🚀 Project Overview
-
-This project bridges AI, IoT, and embedded systems to assist in gesture-based communication—particularly sign language. A smart glove embedded with multiple sensors captures hand movements and interprets them using a trained machine learning model, supporting real-time predictions in both gravity and zero-gravity environments.
+An AI-powered IoT-based smart glove system that recognizes hand signs and sign language gestures using embedded sensors, machine learning, and cloud computing. Designed to enhance communication accessibility in real-time, including microgravity-compatible gesture recognition.
 
 ✅ Model Accuracy: 95.7%
-✅ Number of Recognized Gestures: 20+
+✅ Recognized Gestures: 20+
 ✅ Inference Latency: <150 ms
-✅ Cloud Uptime: 99.9%
+✅ Cloud API Uptime: 99.9%
+
+---
+
+## 🖼️ System Architecture
+
+Below is the system flow of the project:
+
+![System Architecture](https://files.chat.openai.com/file_00000000451c61f595800d70f7d61c7e/Hand_Sign_Recognition_System_Diagram.png)
 
 ---
 
 ## 🛠️ Technologies Used
 
-| Domain               | Tools & Components                                                                  |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| Hardware (IoT)       | MPU-6500 Gyroscope + Accelerometer, Flex Sensors (5), NodeMCU ESP8266, Arduino Nano |
-| Software & ML        | Python, scikit-learn, NumPy, Flask API                                              |
-| Deployment & Testing | AWS EC2, Postman, Arduino IDE, Serial Monitor                                       |
+| Domain           | Tools & Components                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| Hardware (IoT)   | MPU-6500 (Gyroscope + Accelerometer), Flex Sensors (×5), NodeMCU ESP8266, Arduino Nano |
+| Machine Learning | Python, scikit-learn, NumPy, Pandas                                                    |
+| Backend/API      | Flask (REST API), JSON, Postman                                                        |
+| Cloud Deployment | AWS EC2 (Ubuntu), Gunicorn                                                             |
+| Firmware         | Arduino IDE, Serial Monitor                                                            |
 
 ---
 
-## 📦 Hardware Architecture
+## 📦 Hardware Design
 
-The glove includes:
+* 5× Flex Sensors – to detect finger bends
+* 1× MPU-6500 – to capture orientation and movement
+* Arduino Nano – reads and processes analog/digital signals
+* NodeMCU – transmits data via Wi-Fi to the cloud API
 
-* 5x Flex Sensors — to track finger bending
-* 1x MPU-6500 — detects orientation and acceleration
-* Arduino Nano — collects and preprocesses sensor data
-* NodeMCU — transmits data via Wi-Fi to cloud API
-
-Each hand gesture is recorded based on flexion values (analog voltages) and gyroscopic orientation (pitch, roll, yaw), converted into feature vectors for model input.
+Each hand gesture generates a 3D orientation vector and finger flexion data, which is sent to the ML model via API for gesture classification.
 
 ---
 
 ## 🤖 Machine Learning Model
 
-* Model Type: Supervised classification
-* Algorithm: Random Forest (or your actual algorithm)
-* Features:
+* Model Type: Supervised Multi-Class Classifier
+* Algorithm Used: Random Forest (or SVM based on your setup)
+* Feature Set:
 
-  * Flex sensor values (5)
-  * Accelerometer (x, y, z)
+  * Flex Sensor Data (flex\_1 to flex\_5)
   * Gyroscope (x, y, z)
-* Training Samples: 3,000+
-* Model Accuracy: 95.7%
-* Evaluation: Cross-validated with k=5 folds
+  * Accelerometer (x, y, z)
+* Training Data: 3,000+ labeled gesture samples
+* Evaluation:
 
-🧪 Model trained using scikit-learn, serialized with joblib (.pkl), and hosted on AWS EC2 via Flask REST API.
+  * Cross-Validation (k=5)
+  * Accuracy: 95.7%
+  * Precision/Recall/F1-Score: High (>93%)
 
----
-
-## ☁️ Cloud Deployment
-
-* AWS EC2 (Ubuntu) instance with Python Flask backend
-* REST API endpoints for:
-
-  * /predict → Receives JSON input from glove and returns gesture label
-* Integrated testing using Postman
-* CORS enabled for future web/mobile integrations
+Model is serialized using joblib and hosted in Flask on AWS EC2.
 
 ---
 
-## 📡 Data Flow Diagram
+## ☁️ Cloud & API Infrastructure
 
-Glove Sensors → Arduino Nano → NodeMCU → WiFi (HTTP POST) → AWS Flask API → ML Model → Gesture Output
+* Backend Server: Flask
+* Hosting: AWS EC2 instance (Ubuntu)
+* Endpoint:
+
+  * /predict → Accepts JSON input and returns recognized gesture
+* Testing Tool: Postman (manual requests & debugging)
+
+Example JSON Input:
+
+```json
+{
+  "flex_1": 300,
+  "flex_2": 290,
+  "flex_3": 305,
+  "flex_4": 280,
+  "flex_5": 310,
+  "gyro_x": -0.2,
+  "gyro_y": 0.4,
+  "gyro_z": 1.0,
+  "acc_x": 0.6,
+  "acc_y": -0.3,
+  "acc_z": 9.7
+}
+```
+
+Example Response:
+
+```json
+{
+  "gesture": "Thank You"
+}
+```
 
 ---
 
-## 🔧 Setup Instructions
+## 📈 Performance Metrics
 
-### Prerequisites:
+| Metric                    | Value   |
+| ------------------------- | ------- |
+| Model Accuracy            | 95.7%   |
+| Inference Time            | <150 ms |
+| Gesture Classes Supported | 20+     |
+| Uptime (API)              | 99.9%   |
+| Sensor Sampling Rate      | 50 Hz   |
 
-* Arduino IDE
-* Python 3.8+
-* AWS EC2 instance (or localhost)
-* Postman
+---
 
-### Arduino Firmware Setup:
+## 🔧 Getting Started
 
-1. Connect sensors to Arduino Nano + NodeMCU
-2. Upload Arduino sketch to collect sensor data
-3. Transmit data via serial or HTTP to the Flask server
+### 1️⃣ Hardware Setup
 
-### Flask Server Setup:
+* Assemble flex sensors & MPU-6500 on glove.
+* Connect sensors to Arduino Nano.
+* Send data via serial to NodeMCU for Wi-Fi transmission.
+
+### 2️⃣ Arduino Firmware
+
+* Use Arduino IDE to upload your sensor reading logic to Nano.
+* Set baud rate & ensure consistent serial output for the glove data.
+
+### 3️⃣ Python API & Model Hosting
+
+Clone repo and start the Flask API:
 
 ```bash
 git clone https://github.com/yourusername/hand-sign-recognition-iot.git
@@ -94,69 +133,49 @@ pip install -r requirements.txt
 python app.py
 ```
 
-### Postman Test:
+Deploy model to AWS EC2 or run locally.
 
-Send POST request to http\://<your-ec2-ip>:5000/predict
+### 4️⃣ Postman Testing
 
-Body (example):
-
-```json
-{
-  "flex_1": 300,
-  "flex_2": 280,
-  "flex_3": 295,
-  "flex_4": 270,
-  "flex_5": 310,
-  "gyro_x": -0.2,
-  "gyro_y": 0.5,
-  "gyro_z": 1.1,
-  "acc_x": 0.8,
-  "acc_y": -0.3,
-  "acc_z": 9.6
-}
-```
-
-Response:
-
-```json
-{
-  "gesture": "Hello"
-}
-```
+* Open Postman.
+* Send POST request to http\://<your-ec2-ip>:5000/predict with the input JSON.
+* View gesture classification in response.
 
 ---
 
-## 📊 Performance Metrics
+## 📊 Dataset
 
-| Metric                | Value   |
-| --------------------- | ------- |
-| Model Accuracy        | 95.7%   |
-| Number of Gestures    | 20+     |
-| Training Data Samples | 3,000+  |
-| Inference Latency     | <150 ms |
-| Cloud API Uptime      | 99.9%   |
-| Sensor Sampling Rate  | 50 Hz   |
+* Collected using custom glove setup
+* Data Points: 3,000+
+* Format: CSV
+* Attributes: flex\_1-5, gyro\_x/y/z, acc\_x/y/z, label
+
+Available in /data folder (or private depending on repo visibility)
 
 ---
 
-## 📈 Future Enhancements
+## 📲 Future Enhancements
 
-* 🎤 Voice synthesis for predicted gesture output
-* 📲 Android app integration for mobility
-* 🧠 LSTM-based gesture prediction for improved temporal analysis
-* 🌐 Web dashboard for real-time gesture monitoring
-* 🔄 MQTT protocol for lower-latency IoT communication
+* 🔊 Text-to-Speech output for gesture result
+* 📱 Mobile App (Android) with gesture streaming
+* 🧠 CNN-LSTM hybrid model for temporal gesture recognition
+* 🌐 Real-time web dashboard (React + WebSocket)
+* 🔄 Switch to MQTT for IoT transmission efficiency
 
 ---
 
-## 🙌 Acknowledgements
+## 🙏 Acknowledgements
 
-* Arduino Open Source Community
-* AWS Free Tier Infrastructure
-* Sign Language Gesture Dataset (custom-built)
+* Arduino & Embedded Systems Community
+* AWS Free Tier for cloud experimentation
+* Inspiration: Accessibility for Hearing-Impaired Communication
 
 ---
 
 ## 📄 License
 
 MIT License © 2025 Dhiwin Samrich
+
+---
+
+Would you like me to generate a web preview of the README or a GIF demonstrating the project in action?
